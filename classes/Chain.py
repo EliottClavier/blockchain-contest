@@ -8,9 +8,9 @@ from classes.Wallet import Wallet
 class Chain:
 
     def __init__(self):
-        self.blocks = [self.get_block("00")]
-        self.last_transaction_number = None
-        self.inc_transaction = 1
+        self.blocks = self.get_chain()
+        self.last_transaction_number = self.get_last_transaction_number()
+        self.inc_transaction = self.last_transaction_number + 1
         self.inc_hash = 0
 
         # On récupère tous les hash déjà utilisés pour les blocs dans una ttribut pour éviter de faire appel à la méthode
@@ -46,6 +46,39 @@ class Chain:
 
     def verify_wallet(self, id):
         return id in self.get_wallets_name()
+
+    def find_transaction(self, num):
+        for block in self.blocks:
+            for transaction in block:
+                if num == transaction.number:
+                    return transaction
+        return None
+
+    def get_last_transaction_number(self):
+        number = 0
+        for block in self.blocks:
+            for transaction in block.transactions:
+                if int(transaction.number) > number:
+                    number = int(transaction.number)
+        return number
+
+    def get_chain(self):
+        blocks = []
+        for block in self.get_blocks_hash():
+            if block != "00":
+                blocks.append(self.get_block(block))
+
+        ordered_blocks = [self.get_block("00")]
+        while blocks:
+            index = 0
+            for i, block in enumerate(blocks):
+                if block.parent_hash == ordered_blocks[-1].hash:
+                    index = i
+                    break
+
+            if index is not None:
+                ordered_blocks.append(blocks.pop(index))
+        return ordered_blocks
 
     def get_blocks_hash(self):
         path = os.path.join(os.getcwd(), "content\\blocs\\")

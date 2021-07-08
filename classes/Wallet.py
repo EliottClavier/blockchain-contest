@@ -11,7 +11,7 @@ class Wallet:
 
         if not loaded:
             self.unique_id = self.generate_unique_id()
-            self.balance = 0
+            self.balance = 100
             self.history = []
             self.save()
 

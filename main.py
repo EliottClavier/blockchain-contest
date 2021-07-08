@@ -13,6 +13,6 @@ from classes.Chain import Chain
 # block.save()
 
 chain = Chain()
-chain.generate_hash()
-chain.generate_hash()
-chain.generate_hash()
+# chain.add_block()
+# chain.add_block()
+# chain.add_block()
