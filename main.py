@@ -1,10 +1,9 @@
-from classes.Wallet import Wallet
-from classes.Block import Block
-from classes.Chain import Chain
 import os.path
 from os import listdir
 from random import randrange
 import utils.utils as utils
+
+from classes import Chain, Wallet, Block
 
 # Initialisation de la chaîne
 chain = Chain()

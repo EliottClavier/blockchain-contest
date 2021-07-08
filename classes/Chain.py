@@ -1,6 +1,7 @@
 import hashlib
-from classes.Block import Block
 import utils.utils as utils
+
+from classes import Block, Wallet
 
 
 class Chain:
