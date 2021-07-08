@@ -2,7 +2,6 @@ import uuid
 import json
 import os.path
 from os import listdir
-from random import randrange
 
 
 class Wallet:
