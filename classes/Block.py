@@ -6,7 +6,6 @@ import json
 class Block:
 
     def __init__(self, hash, base_hash=None, parent_hash=None):
-
         loaded = self.load(hash)
 
         if not loaded:
@@ -14,15 +13,23 @@ class Block:
             self.hash = hash
             self.parent_hash = parent_hash
             self.transactions = []
+            self.save()
 
     def check_hash(self):
         return self.hash == hashlib.sha256(self.base_hash.encode()).hexdigest()
 
-    def add_transaction(self, transmitter, receiver, amount):
-        self.transactions.append({"transmitter": transmitter.unique_id, "receiver": receiver.unique_id, "amount": amount})
+    def add_transaction(self, number, transmitter, receiver, amount):
+        transaction = {"number": number, "transmitter": transmitter.unique_id, "receiver": receiver.unique_id, "amount": amount}
+        self.transactions.append(transaction)
+        transmitter.history.append(transaction)
+        receiver.history.append(transaction)
 
     def get_transaction(self, num):
-        return self.transactions[num] if len(self.transactions) > num else print("Le numéro de transaction renseigné n'existe pas;")
+        for transaction in self.transactions:
+            if str(num) == transaction.number:
+                return transaction
+        print("Le numéro de transaction renseigné n'existe pas sur ce bloc")
+        return False
 
     def get_weight(self):
         return os.path.getsize(os.path.join(os.getcwd(), "content\\blocs\\", self.hash + ".json"))

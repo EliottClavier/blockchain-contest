@@ -8,8 +8,9 @@ from classes.Wallet import Wallet
 class Chain:
 
     def __init__(self):
-        self.blocks = ["00"]
+        self.blocks = [self.get_block("00")]
         self.last_transaction_number = None
+        self.inc_transaction = 1
         self.inc_hash = 0
 
         # On récupère tous les hash déjà utilisés pour les blocs dans una ttribut pour éviter de faire appel à la méthode
@@ -28,9 +29,8 @@ class Chain:
         return hash in self.blocks_hash or hash[:4] != "0000"
 
     def add_block(self):
-        block = Block(self.generate_hash(), str(self.inc_hash), self.blocks[-1])
-        block.save()
-        self.blocks.append(block.hash)
+        block = Block(self.generate_hash(), str(self.inc_hash), self.blocks[-1].hash)
+        self.blocks.append(block)
 
     def get_block(self, hash):
         return Block(hash)
@@ -39,8 +39,10 @@ class Chain:
         if self.verify_wallet(transmitter) and self.verify_wallet(receiver) and block.check_weight():
             transmitter, receiver = Wallet(transmitter), Wallet(receiver)
             if transmitter.balance >= amount:
-                block.add_transaction(transmitter, receiver, amount)
-                block.save()
+                block.add_transaction(self.inc_transaction, transmitter, receiver, amount)
+                transmitter.send(receiver, amount)
+                block.save(), transmitter.save(), receiver.save()
+                self.last_transaction_number, self.inc_transaction = self.inc_transaction, self.inc_transaction + 1
 
     def verify_wallet(self, id):
         return id in self.get_wallets_name()

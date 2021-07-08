@@ -13,6 +13,7 @@ class Wallet:
             self.unique_id = self.generate_unique_id()
             self.balance = 0
             self.history = []
+            self.save()
 
     def generate_unique_id(self):
         wallets = self.get_wallets_name()
@@ -31,12 +32,15 @@ class Wallet:
 
     def add_balance(self, balance):
         self.balance += balance
+        self.save()
 
     def sub_balance(self, balance):
         self.balance -= balance
+        self.save()
 
-    def send(self):
-        pass
+    def send(self, receiver, amount):
+        self.sub_balance(amount)
+        receiver.add_balance(amount)
 
     def save(self):
         content = json.dumps(self.__dict__)
