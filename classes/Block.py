@@ -23,6 +23,7 @@ class Block:
         self.transactions.append(transaction)
         transmitter.history.append(transaction)
         receiver.history.append(transaction)
+        return transaction
 
     def get_transaction(self, num):
         for transaction in self.transactions:
@@ -52,5 +53,4 @@ class Block:
                 f.close()
                 for k, v in content.items():
                     setattr(self, k, v)
-            return True
-        return False
+        return os.path.isfile(path)

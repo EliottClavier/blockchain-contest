@@ -1,8 +1,6 @@
 import hashlib
-import os.path
-from os import listdir
 from classes.Block import Block
-from classes.Wallet import Wallet
+import utils.utils as utils
 
 
 class Chain:
@@ -10,12 +8,11 @@ class Chain:
     def __init__(self):
         self.blocks = self.get_chain()
         self.last_transaction_number = self.get_last_transaction_number()
-        self.inc_transaction = self.last_transaction_number + 1
         self.inc_hash = 0
 
         # On récupère tous les hash déjà utilisés pour les blocs dans una ttribut pour éviter de faire appel à la méthode
         # get_blocks_hash() x fois lors de la génération d'un hash
-        self.blocks_hash = self.get_blocks_hash()
+        self.blocks_hash = utils.get_blocks_hash()
 
     def generate_hash(self):
         while self.verify_hash(hashlib.sha256(str(self.inc_hash).encode()).hexdigest()):
@@ -36,35 +33,43 @@ class Chain:
         return Block(hash)
 
     def add_transaction(self, block, transmitter, receiver, amount):
-        if self.verify_wallet(transmitter) and self.verify_wallet(receiver) and block.check_weight():
-            transmitter, receiver = Wallet(transmitter), Wallet(receiver)
-            if transmitter.balance >= amount:
-                block.add_transaction(self.inc_transaction, transmitter, receiver, amount)
-                transmitter.send(receiver, amount)
-                block.save(), transmitter.save(), receiver.save()
-                self.last_transaction_number, self.inc_transaction = self.inc_transaction, self.inc_transaction + 1
+        if block.check_weight():
+            if self.verify_wallet(transmitter.unique_id) and self.verify_wallet(receiver.unique_id):
+                if transmitter.balance >= amount:
+                    self.last_transaction_number += 1
+                    print(self.last_transaction_number)
+                    transaction = block.add_transaction(self.last_transaction_number + 1, transmitter, receiver, amount)
+                    transmitter.send(receiver, amount)
+                    block.save(), transmitter.save(), receiver.save()
+                    return transaction
+                else:
+                    return "Transaction impossible: solde insuffisant pour l'utilisateur émetteur."
+            else:
+                return "Transaction impossible: {} non existant.".format("wallet émetteur" if self.verify_wallet(transmitter.unique_id) else "wallet récepteur")
+        else:
+            return "Transaction impossible: place non disponible sur le bloc choisi."
 
     def verify_wallet(self, id):
-        return id in self.get_wallets_name()
+        return id in utils.get_wallets_name()
 
     def find_transaction(self, num):
         for block in self.blocks:
-            for transaction in block:
-                if num == transaction.number:
+            for transaction in block.transactions:
+                if num == transaction['number']:
                     return transaction
-        return None
+        return "Aucune transaction pour le numéro {}".format(num)
 
     def get_last_transaction_number(self):
         number = 0
         for block in self.blocks:
             for transaction in block.transactions:
-                if int(transaction.number) > number:
-                    number = int(transaction.number)
+                if int(transaction['number']) > number:
+                    number = int(transaction['number'])
         return number
 
     def get_chain(self):
         blocks = []
-        for block in self.get_blocks_hash():
+        for block in utils.get_blocks_hash():
             if block != "00":
                 blocks.append(self.get_block(block))
 
@@ -79,19 +84,3 @@ class Chain:
             if index is not None:
                 ordered_blocks.append(blocks.pop(index))
         return ordered_blocks
-
-    def get_blocks_hash(self):
-        path = os.path.join(os.getcwd(), "content\\blocs\\")
-        files = []
-        for i, file in enumerate(listdir(path)):
-            if not os.path.isdir(path + "\\" + file):
-                files.append(os.path.splitext(file)[0])
-        return files
-
-    def get_wallets_name(self):
-        path = os.path.join(os.getcwd(), "content\\wallets\\")
-        files = []
-        for i, file in enumerate(listdir(path)):
-            if not os.path.isdir(path + "\\" + file):
-                files.append(os.path.splitext(file)[0])
-        return files

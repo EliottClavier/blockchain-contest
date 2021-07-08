@@ -1,7 +1,7 @@
 import uuid
 import json
 import os.path
-from os import listdir
+import utils.utils as utils
 
 
 class Wallet:
@@ -16,19 +16,11 @@ class Wallet:
             self.save()
 
     def generate_unique_id(self):
-        wallets = self.get_wallets_name()
+        wallets = utils.get_wallets_name()
         id = str(uuid.uuid4())
         while id in wallets:
             id = str(uuid.uuid4())
         return id
-
-    def get_wallets_name(self):
-        path = os.path.join(os.getcwd(), "content\\wallets\\")
-        files = []
-        for i, file in enumerate(listdir(path)):
-            if not os.path.isdir(path + "\\" + file):
-                files.append(os.path.splitext(file)[0])
-        return files
 
     def add_balance(self, balance):
         self.balance += balance
@@ -57,5 +49,4 @@ class Wallet:
                 f.close()
                 for k, v in content.items():
                     setattr(self, k, v)
-            return True
-        return False
+        return os.path.isfile(path)
