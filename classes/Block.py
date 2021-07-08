@@ -27,6 +27,9 @@ class Block:
     def get_weight(self):
         return os.path.getsize(os.path.join(os.getcwd(), "content\\blocs\\", self.hash + ".json"))
 
+    def check_weight(self):
+        return self.get_weight() < 256000
+
     def save(self):
         content = json.dumps(self.__dict__)
         path = os.path.join(os.getcwd(), "content\\blocs\\", self.hash + ".json")

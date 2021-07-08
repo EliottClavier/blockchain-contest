@@ -15,7 +15,6 @@ class Wallet:
             self.history = []
 
     def generate_unique_id(self):
-
         wallets = self.get_wallets_name()
         id = str(uuid.uuid4())
         while id in wallets:
