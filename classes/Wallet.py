@@ -36,13 +36,17 @@ class Wallet:
 
     def save(self):
         content = json.dumps(self.__dict__)
-        path = os.path.join(os.getcwd(), "content\\wallets\\", self.unique_id + ".json")
+        path = os.path.join(
+            os.getcwd(), "content\\wallets\\", self.unique_id + ".json"
+        )
         with open(path, "w+") as f:
             f.write(content)
             f.close()
 
     def load(self, unique_id):
-        path = os.path.join(os.getcwd(), "content\\wallets\\", unique_id + ".json")
+        path = os.path.join(
+            os.getcwd(), "content\\wallets\\", unique_id + ".json"
+        )
         if os.path.isfile(path):
             with open(path, "r") as f:
                 content = json.loads(f.read())

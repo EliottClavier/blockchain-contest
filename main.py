@@ -35,46 +35,88 @@ block1 = chain.get_block("00")
 blocks_hash = utils.get_blocks_hash()
 block2 = chain.get_block(blocks_hash.pop(randrange(len(blocks_hash))))
 
-# Récupération du dernier numéro de transaction
-print("\n0.------------------------- Récupération du dernier numéro de transaction -------------------------\n")
+#
+# 0. Récupération du dernier numéro de transaction
+#
+print("\n0.------ "
+      "Récupération du dernier numéro de transaction "
+      "------\n")
 print(chain.last_transaction_number)
 
-# Transaction classique
-print("\n1. ------------------------- Transaction n°1: -------------------------\n")
+#
+# 1. Transaction classique
+#
+print("\n1. "
+      "------ Transaction n°1: "
+      "------\n")
+
 transaction_amount = 10
 print("Avant transaction :")
 print("Émetteur ->", wallet1.unique_id, "->", wallet1.balance)
 print("Récepteur ->", wallet2.unique_id, "->", wallet2.balance)
-print("\nTransaction :", chain.add_transaction(block2, wallet1, wallet2, transaction_amount), "\n")
-print("Après transaction :")
-print("Émetteur ->", wallet1.unique_id, "->", wallet1.balance, "(-{})".format(transaction_amount))
-print("Récepteur ->", wallet2.unique_id, "->", wallet2.balance, "(+{})".format(transaction_amount))
 
-# Transaction trop importante pour un utilisateur (solde insuffisant)
-print("\n2. ------------------------- Transaction n°2: solde insuffisant -------------------------\n")
+print(
+    "\n",
+    "Transaction :",
+    chain.add_transaction(block2, wallet1, wallet2, transaction_amount),
+    "\n"
+)
+
+print("Après transaction :")
+print("Émetteur ->", wallet1.unique_id, "->", wallet1.balance,
+      "(-{})".format(transaction_amount))
+print("Récepteur ->", wallet2.unique_id, "->", wallet2.balance,
+      "(+{})".format(transaction_amount))
+
+#
+# 2. Transaction trop importante pour un utilisateur (solde insuffisant)
+#
+print("\n2. ------ "
+      "Transaction n°2: solde insuffisant "
+      "------\n")
 print(chain.add_transaction(block2, wallet1, wallet2, 500))
 
-# Surcharge d'un bloc pour tester la limite de place en octets
-print("\n3. ------------------------- Transaction n°3: place insuffisante -------------------------\n")
+#
+# 3. Surcharge d'un bloc pour tester la limite de place en octets
+#
+print("\n3. ------ "
+      "Transaction n°3: place insuffisante "
+      "------\n")
+
 result = None
-while result != "Transaction impossible: place non disponible sur le bloc choisi.":
-    result = chain.add_transaction(block1, wallet1, wallet2, transaction_amount)
-    result = chain.add_transaction(block1, wallet2, wallet1, transaction_amount)
+expected_response = "Transaction impossible: " \
+                    "place non disponible sur le bloc choisi."
+while result != expected_response:
+    result = chain.add_transaction(
+        block1, wallet1, wallet2, transaction_amount)
+
+    result = chain.add_transaction(
+        block1, wallet2, wallet1, transaction_amount)
 print(result)
 
-# Reconstruction de la chaine lors de l'initialisation d'un objet Chain
-print("\n4. ------------------------- Reconstruction de la chaine à chaque initialisation de la chaine -------------------------\n")
+#
+# 4. Reconstruction de la chaine lors de l'initialisation d'un objet Chain
+#
+print("\n4. ------ "
+      "Reconstruction de la chaine à chaque initialisation de la chaine "
+      "------\n")
 del chain
 chain = Chain()
 print(" -> ".join([block.hash for block in chain.blocks]))
 
-# Récupération du dernier numéro de transaction après réinitilisation de la chaine
-print("\n5. ------------------------- Récupération du dernier numéro de transaction -------------------------\n")
+#
+# 5. Récupération du dernier numéro de transaction
+# après réinitilisation de la chaine
+#
+print("\n5. ------ "
+      "Récupération du dernier numéro de transaction "
+      "------\n")
 print(chain.last_transaction_number)
 
-# Récupération d'une transaction par le numéro
-print("\n6. ------------------------- Récupération d'une transaction par le numéro -------------------------\n")
+# 6. Récupération d'une transaction par le numéro
+print("\n6. ------ "
+      "Récupération d'une transaction par le numéro "
+      "------\n")
 print(chain.find_transaction(100))
 print(chain.find_transaction(-1))
 print(chain.find_transaction(chain.last_transaction_number + 1))
-

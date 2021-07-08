@@ -1,7 +1,7 @@
 import hashlib
 import utils.utils as utils
 
-from classes import Block, Wallet
+from classes import Block
 
 
 class Chain:
@@ -11,12 +11,15 @@ class Chain:
         self.last_transaction_number = self.get_last_transaction_number()
         self.inc_hash = 0
 
-        # On récupère tous les hash déjà utilisés pour les blocs dans una ttribut pour éviter de faire appel à la méthode
+        # On récupère tous les hash déjà utilisés pour les blocs dans un
+        # attribut pour éviter de faire appel à la méthode
         # get_blocks_hash() x fois lors de la génération d'un hash
         self.blocks_hash = utils.get_blocks_hash()
 
     def generate_hash(self):
-        while self.verify_hash(hashlib.sha256(str(self.inc_hash).encode()).hexdigest()):
+        while self.verify_hash(
+                hashlib.sha256(str(self.inc_hash).encode()).hexdigest()
+        ):
             self.inc_hash += 1
 
         hash = hashlib.sha256(str(self.inc_hash).encode()).hexdigest()
@@ -27,28 +30,50 @@ class Chain:
         return hash in self.blocks_hash or hash[:4] != "0000"
 
     def add_block(self):
-        block = Block(self.generate_hash(), str(self.inc_hash), self.blocks[-1].hash)
+        block = Block(
+            self.generate_hash(),
+            str(self.inc_hash),
+            self.blocks[-1].hash
+        )
         self.blocks.append(block)
 
     def get_block(self, hash):
         return Block(hash)
 
     def add_transaction(self, block, transmitter, receiver, amount):
+
+        responses = [
+            "Transaction impossible: "
+            "solde insuffisant pour l'utilisateur émetteur.",
+
+            "Transaction impossible: {} non existant.".format(
+                "wallet émetteur"
+                if self.verify_wallet(transmitter.unique_id)
+                else "wallet récepteur"
+            ),
+
+            "Transaction impossible: "
+            "place non disponible sur le bloc choisi."
+        ]
+
         if block.check_weight():
-            if self.verify_wallet(transmitter.unique_id) and self.verify_wallet(receiver.unique_id):
+            if self.verify_wallet(transmitter.unique_id) \
+                    and self.verify_wallet(receiver.unique_id):
                 if transmitter.balance >= amount:
                     self.last_transaction_number += 1
-                    print(self.last_transaction_number)
-                    transaction = block.add_transaction(self.last_transaction_number + 1, transmitter, receiver, amount)
+                    transaction = block.add_transaction(
+                        self.last_transaction_number + 1,
+                        transmitter, receiver, amount
+                    )
                     transmitter.send(receiver, amount)
                     block.save(), transmitter.save(), receiver.save()
                     return transaction
                 else:
-                    return "Transaction impossible: solde insuffisant pour l'utilisateur émetteur."
+                    return responses[0]
             else:
-                return "Transaction impossible: {} non existant.".format("wallet émetteur" if self.verify_wallet(transmitter.unique_id) else "wallet récepteur")
+                return responses[1]
         else:
-            return "Transaction impossible: place non disponible sur le bloc choisi."
+            return responses[2]
 
     def verify_wallet(self, id):
         return id in utils.get_wallets_name()

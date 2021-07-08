@@ -19,7 +19,12 @@ class Block:
         return self.hash == hashlib.sha256(self.base_hash.encode()).hexdigest()
 
     def add_transaction(self, number, transmitter, receiver, amount):
-        transaction = {"number": number, "transmitter": transmitter.unique_id, "receiver": receiver.unique_id, "amount": amount}
+        transaction = {
+            "number": number,
+            "transmitter": transmitter.unique_id,
+            "receiver": receiver.unique_id,
+            "amount": amount
+        }
         self.transactions.append(transaction)
         transmitter.history.append(transaction)
         receiver.history.append(transaction)
@@ -33,20 +38,26 @@ class Block:
         return False
 
     def get_weight(self):
-        return os.path.getsize(os.path.join(os.getcwd(), "content\\blocs\\", self.hash + ".json"))
+        return os.path.getsize(
+            os.path.join(os.getcwd(), "content\\blocs\\", self.hash + ".json")
+        )
 
     def check_weight(self):
         return self.get_weight() < 256000
 
     def save(self):
         content = json.dumps(self.__dict__)
-        path = os.path.join(os.getcwd(), "content\\blocs\\", self.hash + ".json")
+        path = os.path.join(
+            os.getcwd(), "content\\blocs\\", self.hash + ".json"
+        )
         with open(path, "w+") as f:
             f.write(content)
             f.close()
 
     def load(self, hash):
-        path = os.path.join(os.getcwd(), "content\\blocs\\", hash + ".json")
+        path = os.path.join(
+            os.getcwd(), "content\\blocs\\", hash + ".json"
+        )
         if os.path.isfile(path):
             with open(path, "r") as f:
                 content = json.loads(f.read())
