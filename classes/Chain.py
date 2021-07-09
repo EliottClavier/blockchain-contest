@@ -41,7 +41,7 @@ class Chain:
     def add_block(self):
         block = Block(
             self.generate_hash(),
-            str(self.inc_hash),
+            str(self.inc_hash - 1),
             self.blocks[-1].hash
         )
         self.blocks.append(block)
