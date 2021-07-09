@@ -91,6 +91,7 @@ expected_response = "Transaction impossible: " \
 while result != expected_response:
     result = chain.add_transaction(
         block1, wallet1, wallet2, 0)
+print(expected_response)
 print("Poids du block: {} octets".format(block1.get_weight()))
 
 
@@ -104,11 +105,35 @@ print(chain.add_transaction(block2, Wallet("Test"), wallet2, 500))
 print(chain.add_transaction(block2, wallet1, Wallet("Test"), 500))
 print(chain.add_transaction(block2, Wallet("Test"), Wallet("Test"), 500))
 
+#
+# 5. Deuxième transaction classique
+#
+print("\n5. "
+      "------ Transaction n°5: "
+      "------\n")
+
+print("Transaction de {} tokens".upper().format(transaction_amount))
+print("Avant transaction :")
+print("Émetteur ->", wallet1.unique_id, "->", wallet1.balance)
+print("Récepteur ->", wallet2.unique_id, "->", wallet2.balance)
+
+print(
+    "\nTransaction :",
+    chain.add_transaction(block2, wallet1, wallet2, transaction_amount),
+    "\n"
+)
+
+print("Après transaction :")
+print("Émetteur ->", wallet1.unique_id, "->", wallet1.balance,
+      "(-{})".format(transaction_amount))
+print("Récepteur ->", wallet2.unique_id, "->", wallet2.balance,
+      "(+{})".format(transaction_amount))
+
 
 #
-# 5. Reconstruction de la chaine lors de l'initialisation d'un objet Chain
+# 6. Reconstruction de la chaine lors de l'initialisation d'un objet Chain
 #
-print("\n5. ------ "
+print("\n6. ------ "
       "Reconstruction de la chaine à chaque initialisation de la chaine "
       "------\n")
 del chain
@@ -117,32 +142,32 @@ print(" -> ".join([block.hash for block in chain.blocks]))
 
 
 #
-# 6. Récupération du dernier numéro de transaction
+# 7. Récupération du dernier numéro de transaction
 # après réinitilisation de la chaine
 #
-print("\n6. ------ "
+print("\n7. ------ "
       "Récupération du dernier numéro de transaction "
       "------\n")
 print(chain.last_transaction_number)
 
 
 #
-# 7. Récupération d'une transaction par le numéro depuis la chaîne
+# 8. Récupération d'une transaction par le numéro depuis la chaîne
 #
-print("\n7. ------ "
-      "Récupération d'une transaction par le numéro depuis la chaîne "
-      "------\n")
+print("\n8. ------ "
+      "Récupération d'une transaction par le numéro depuis la chaîne"
+      " ------\n")
 print(chain.find_transaction(chain.last_transaction_number))
 print(chain.find_transaction(-1))
 print(chain.find_transaction(chain.last_transaction_number + 1))
 
 
 #
-# 8. Récupération d'une transaction par le numéro depuis le block
+# 9. Récupération d'une transaction par le numéro depuis le block
 #
-print("\n8. ------ "
+print("\n9. ------ "
       "Récupération d'une transaction par le numéro depuis le block"
-      "------\n")
+      " ------\n")
 print(block2.get_transaction(chain.last_transaction_number))
 print(block2.get_transaction(-1))
 print(block2.get_transaction(chain.last_transaction_number + 1))
