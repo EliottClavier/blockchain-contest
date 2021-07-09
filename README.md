@@ -24,4 +24,5 @@ Pour lancer le script, la commande est la suivante :
 python main.py
 ```
 Les résultats du script sont observables dans la console et a comparé avec le code inscrit dans main.py.
+A chaque étape, la console s'arrête pour pouvoir mieux comparer les résultats au code; il suffit alors d'appuyer sur Entrée pour poursuivre son exécution.
 
