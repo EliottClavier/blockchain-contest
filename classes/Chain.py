@@ -14,7 +14,8 @@ class Chain:
         self.last_transaction_number = self.get_last_transaction_number()
 
         # Numéro d'incrémentation pour la génération du hash
-        # On le sauvegarde pour éviter de repartir à zéro pour chaque nouveau block
+        # On le sauvegarde pour éviter de repartir à zéro
+        # pour chaque nouveau block
         self.inc_hash = 0
 
         # On récupère tous les hash déjà utilisés pour les blocs dans un
@@ -53,7 +54,8 @@ class Chain:
     # Méthode d'ajout de transaction au block choisi entre deux wallets
     # La méthode vérifie la validité des wallets et le solde de l'émetteur
     # Elle fait appel à son homonyme présent dans la classe Block (voir desc)
-    # puis réalise l'échange de tokens et la sauvegarde si la réponse du Block est positive
+    # puis réalise l'échange de tokens et la sauvegarde si la réponse
+    # du Block est positive
     def add_transaction(self, block, transmitter, receiver, amount):
         # Vérification de la validité des wallets passés en paramètre
         check_transmitter = self.verify_wallet(transmitter.unique_id)
@@ -72,7 +74,8 @@ class Chain:
                 self.last_transaction_number + 1,
                 transmitter, receiver, amount
             )
-            # Si la transaction est acceptée sur le bloc (vérification du poids)
+            # Si la transaction est acceptée sur le bloc
+            # (vérification du poids)
             if transaction:
                 self.last_transaction_number += 1
                 transmitter.send(receiver, amount)

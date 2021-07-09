@@ -41,7 +41,8 @@ class Wallet:
         self.balance -= balance
         self.save()
 
-    # Méthode d'envoi de tokens du wallet vers un autre wallet (liée à la transaction)
+    # Méthode d'envoi de tokens du wallet vers un autre wallet
+    # (liée à la transaction)
     def send(self, receiver, amount):
         self.sub_balance(amount)
         receiver.add_balance(amount)

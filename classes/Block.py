@@ -18,14 +18,15 @@ class Block:
             self.transactions = []
             self.save()
 
-    # Méthode de vérification de la cohérence du hash par rapport à la string originale
+    # Méthode de vérification de la cohérence du hash
+    # par rapport à la string originale
     def check_hash(self):
         return self.hash == hashlib.sha256(self.base_hash.encode()).hexdigest()
 
     # Méthode d'ajout de transaction sur le block, l'émetteur et le récepteur
-    # La méthode complète son homonyme présente sur la Chain et vérifie le poids
-    # du block avec celui de la transaction avec d'ajouter la transaction
-    # au block et à l'historique des wallets concernés
+    # La méthode complète son homonyme présente sur la Chain et
+    # vérifie le poids du block avec celui de la transaction avant
+    # d'ajouter la transaction au block et à l'historique des wallets concernés
     def add_transaction(self, number, transmitter, receiver, amount):
         transaction = {
             "number": number,
