@@ -9,11 +9,16 @@ class Wallet:
     def __init__(self, unique_id=""):
         loaded = self.load(unique_id)
 
-        if not loaded:
+        if not loaded and not unique_id:
             self.unique_id = self.generate_unique_id()
             self.balance = 100
             self.history = []
             self.save()
+        # Dans le cas ou le chargement du wallet a échoué, on construit un wallet invalide
+        elif not loaded:
+            self.unique_id = "INVALIDE"
+            self.balance = 0
+            self.history = []
 
     def generate_unique_id(self):
         wallets = utils.get_wallets_name()

@@ -8,13 +8,13 @@ from classes import Chain, Wallet, Block
 # Initialisation de la chaîne
 chain = Chain()
 
-# Initialisation de trois Wallets
+# Initialisation de trois Wallets (méthode de génération d'un ID + save)
 path = os.path.join(os.getcwd(), "content\\wallets\\")
-if len(listdir(path)) < 4:
+if len(listdir(path)) < 3:
     wallet1 = Wallet()
     wallet2 = Wallet()
     wallet3 = Wallet()
-# Ou récupération de trois wallets
+# Ou récupération de trois wallets aléatoirement (méthode load)
 else:
     wallets_name = utils.get_wallets_name()
     wallet1 = Wallet(wallets_name.pop(randrange(len(wallets_name))))
@@ -23,7 +23,7 @@ else:
 
 # Initialisation de blocks
 path = os.path.join(os.getcwd(), "content\\blocs\\")
-if len(listdir(path)) < 4:
+if len(listdir(path)) < 3:
     chain.add_block()
     chain.add_block()
     chain.add_block()
@@ -31,7 +31,7 @@ if len(listdir(path)) < 4:
 # Récupération du bloc principal
 block1 = chain.get_block("00")
 
-# Récupération de deux autres blocs
+# Récupération de deux autres blocs aléatoirement
 blocks_hash = utils.get_blocks_hash()
 block2 = chain.get_block(blocks_hash.pop(randrange(len(blocks_hash))))
 
@@ -88,16 +88,25 @@ expected_response = "Transaction impossible: " \
                     "place non disponible sur le bloc choisi."
 while result != expected_response:
     result = chain.add_transaction(
-        block1, wallet1, wallet2, transaction_amount)
+        block1, wallet1, wallet2, 0)
+print("Poids du block: {} octets".format(block1.get_weight()))
 
-    result = chain.add_transaction(
-        block1, wallet2, wallet1, transaction_amount)
-print(result)
 
 #
-# 4. Reconstruction de la chaine lors de l'initialisation d'un objet Chain
+# 4. Transactions avec des wallets invalides
 #
 print("\n4. ------ "
+      "Transaction n°4: wallet inexistant "
+      "------\n")
+print(chain.add_transaction(block2, Wallet("Test"), wallet2, 500))
+print(chain.add_transaction(block2, wallet1, Wallet("Test"), 500))
+print(chain.add_transaction(block2, Wallet("Test"), Wallet("Test"), 500))
+
+
+#
+# 5. Reconstruction de la chaine lors de l'initialisation d'un objet Chain
+#
+print("\n5. ------ "
       "Reconstruction de la chaine à chaque initialisation de la chaine "
       "------\n")
 del chain
@@ -105,18 +114,26 @@ chain = Chain()
 print(" -> ".join([block.hash for block in chain.blocks]))
 
 #
-# 5. Récupération du dernier numéro de transaction
+# 6. Récupération du dernier numéro de transaction
 # après réinitilisation de la chaine
 #
-print("\n5. ------ "
+print("\n6. ------ "
       "Récupération du dernier numéro de transaction "
       "------\n")
 print(chain.last_transaction_number)
 
-# 6. Récupération d'une transaction par le numéro
-print("\n6. ------ "
-      "Récupération d'une transaction par le numéro "
+# 7. Récupération d'une transaction par le numéro depuis la chaîne
+print("\n7. ------ "
+      "Récupération d'une transaction par le numéro depuis la chaîne "
       "------\n")
 print(chain.find_transaction(100))
 print(chain.find_transaction(-1))
 print(chain.find_transaction(chain.last_transaction_number + 1))
+
+# 7. Récupération d'une transaction par le numéro depuis le block
+print("\n7. ------ "
+      "Récupération d'une transaction par le numéro depuis le block"
+      "------\n")
+print(block2.get_transaction(chain.last_transaction_number))
+print(block2.get_transaction(-1))
+print(block2.get_transaction(chain.last_transaction_number + 1))

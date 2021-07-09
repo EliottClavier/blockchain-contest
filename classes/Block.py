@@ -1,6 +1,7 @@
 import hashlib
 import os
 import json
+import sys
 
 
 class Block:
@@ -25,25 +26,29 @@ class Block:
             "receiver": receiver.unique_id,
             "amount": amount
         }
-        self.transactions.append(transaction)
-        transmitter.history.append(transaction)
-        receiver.history.append(transaction)
-        return transaction
+
+        # Vérification du poids du bloc si ajout de la transaction
+        if self.check_weight(transaction):
+            self.transactions.append(transaction)
+            transmitter.history.append(transaction)
+            receiver.history.append(transaction)
+            return transaction
+        return False
 
     def get_transaction(self, num):
         for transaction in self.transactions:
-            if str(num) == transaction.number:
+            if num == transaction['number']:
                 return transaction
-        print("Le numéro de transaction renseigné n'existe pas sur ce bloc")
-        return False
+        return "Le numéro de transaction {} " \
+               "n'existe pas sur ce bloc.".format(num)
 
     def get_weight(self):
         return os.path.getsize(
             os.path.join(os.getcwd(), "content\\blocs\\", self.hash + ".json")
         )
 
-    def check_weight(self):
-        return self.get_weight() < 256000
+    def check_weight(self, transaction):
+        return self.get_weight() + sys.getsizeof(transaction) < 256000
 
     def save(self):
         content = json.dumps(self.__dict__)

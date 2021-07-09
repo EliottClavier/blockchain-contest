@@ -41,39 +41,34 @@ class Chain:
         return Block(hash)
 
     def add_transaction(self, block, transmitter, receiver, amount):
+        # Vérification de la validité des wallets passés en paramètre
+        check_transmitter = self.verify_wallet(transmitter.unique_id)
+        check_receiver = self.verify_wallet(receiver.unique_id)
 
-        responses = [
-            "Transaction impossible: "
-            "solde insuffisant pour l'utilisateur émetteur.",
+        if not check_transmitter and not check_receiver:
+            return "Transaction impossible: wallets renseignés inexistants"
+        elif not check_transmitter:
+            return "Transaction impossible: émetteur inexistant"
+        elif not check_receiver:
+            return "Transaction impossible: récepteur inexistant"
 
-            "Transaction impossible: {} non existant.".format(
-                "wallet émetteur"
-                if self.verify_wallet(transmitter.unique_id)
-                else "wallet récepteur"
-            ),
-
-            "Transaction impossible: "
-            "place non disponible sur le bloc choisi."
-        ]
-
-        if block.check_weight():
-            if self.verify_wallet(transmitter.unique_id) \
-                    and self.verify_wallet(receiver.unique_id):
-                if transmitter.balance >= amount:
-                    self.last_transaction_number += 1
-                    transaction = block.add_transaction(
-                        self.last_transaction_number + 1,
-                        transmitter, receiver, amount
-                    )
-                    transmitter.send(receiver, amount)
-                    block.save(), transmitter.save(), receiver.save()
-                    return transaction
-                else:
-                    return responses[0]
-            else:
-                return responses[1]
+        # Vérification du solde du wallet émetteur
+        if transmitter.balance >= amount:
+            self.last_transaction_number += 1
+            transaction = block.add_transaction(
+                self.last_transaction_number + 1,
+                transmitter, receiver, amount
+            )
+            # Si la transaction est acceptée sur le bloc
+            if transaction:
+                transmitter.send(receiver, amount)
+                block.save(), transmitter.save(), receiver.save()
+                return transaction
+            return "Transaction impossible: " \
+               "place non disponible sur le bloc choisi."
         else:
-            return responses[2]
+            return "Transaction impossible: " \
+                   "solde insuffisant pour l'utilisateur émetteur.",
 
     def verify_wallet(self, id):
         return id in utils.get_wallets_name()
