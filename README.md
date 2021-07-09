@@ -19,7 +19,7 @@ Python 3.8.5
 
 ## 2. Lancement du projet
 La démonstration du projet se fait par le biai du script main.py, qui va réaliser automatiquement différentes étapes permettant de démontrer le fonctionnement du projet.
-Pour lancer le script, la commande est la suivante :
+Pour lancer le script, se placer dans le dossier parent (blockchain-contest) et écrire la commande est la suivante :
 ```commandline
 python main.py
 ```
