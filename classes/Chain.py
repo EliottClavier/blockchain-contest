@@ -97,7 +97,7 @@ class Chain:
             for transaction in block.transactions:
                 if num == transaction['number']:
                     return block
-        return "Aucune transaction pour le numéro {}".format(num)
+        return "Aucune transaction pour le numéro {}.".format(num)
 
     # Méthode de recherche du numéro de la dernière transaction effectuée
     def get_last_transaction_number(self):

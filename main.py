@@ -70,8 +70,7 @@ def main():
     print("\n0.------ "
           "Récupération du dernier numéro de transaction "
           "------\n")
-    print("N°", chain.last_transaction_number, "sur le block",
-          chain.find_transaction(chain.last_transaction_number).hash)
+    print("N°", chain.last_transaction_number)
     input("\nAppuyer sur entrée pour continuer ...")
 
     #
@@ -110,7 +109,7 @@ def main():
     result = None
     expected_response = "Transaction impossible: " \
                         "place non disponible sur le bloc choisi."
-    print("// Génération d'un grand nombre de transaction sur le block {} "
+    print("// Génération d'un grand nombre de transactions sur le block {} "
           "\\\\\n".format(block1.hash))
     while result != expected_response:
         result = chain.add_transaction(
@@ -164,8 +163,7 @@ def main():
     print("\n7. ------ "
           "Récupération du dernier numéro de transaction "
           "------\n")
-    print("N°", chain.last_transaction_number, "sur le block",
-          chain.find_transaction(chain.last_transaction_number).hash)
+    print("N°", chain.last_transaction_number)
     input("\nAppuyer sur entrée pour continuer ...")
 
     #
