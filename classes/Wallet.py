@@ -14,7 +14,8 @@ class Wallet:
             self.balance = 100
             self.history = []
             self.save()
-        # Dans le cas ou le chargement du wallet a échoué, on construit un wallet invalide
+        # Dans le cas ou le chargement du wallet a échoué,
+        # on construit un wallet invalide
         elif not loaded:
             self.unique_id = "INVALIDE"
             self.balance = 0

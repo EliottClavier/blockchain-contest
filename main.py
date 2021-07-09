@@ -32,8 +32,10 @@ if len(listdir(path)) < 3:
 block1 = chain.get_block("00")
 
 # Récupération de deux autres blocs aléatoirement
+# (par la chaîne, et par le block directemment)
 blocks_hash = utils.get_blocks_hash()
 block2 = chain.get_block(blocks_hash.pop(randrange(len(blocks_hash))))
+block3 = Block(blocks_hash.pop(randrange(len(blocks_hash))))
 
 #
 # 0. Récupération du dernier numéro de transaction
@@ -51,13 +53,13 @@ print("\n1. "
       "------\n")
 
 transaction_amount = 10
+print("Transaction de {} tokens".upper().format(transaction_amount))
 print("Avant transaction :")
 print("Émetteur ->", wallet1.unique_id, "->", wallet1.balance)
 print("Récepteur ->", wallet2.unique_id, "->", wallet2.balance)
 
 print(
-    "\n",
-    "Transaction :",
+    "\nTransaction :",
     chain.add_transaction(block2, wallet1, wallet2, transaction_amount),
     "\n"
 )
@@ -113,6 +115,7 @@ del chain
 chain = Chain()
 print(" -> ".join([block.hash for block in chain.blocks]))
 
+
 #
 # 6. Récupération du dernier numéro de transaction
 # après réinitilisation de la chaine
@@ -122,16 +125,22 @@ print("\n6. ------ "
       "------\n")
 print(chain.last_transaction_number)
 
+
+#
 # 7. Récupération d'une transaction par le numéro depuis la chaîne
+#
 print("\n7. ------ "
       "Récupération d'une transaction par le numéro depuis la chaîne "
       "------\n")
-print(chain.find_transaction(100))
+print(chain.find_transaction(chain.last_transaction_number))
 print(chain.find_transaction(-1))
 print(chain.find_transaction(chain.last_transaction_number + 1))
 
-# 7. Récupération d'une transaction par le numéro depuis le block
-print("\n7. ------ "
+
+#
+# 8. Récupération d'une transaction par le numéro depuis le block
+#
+print("\n8. ------ "
       "Récupération d'une transaction par le numéro depuis le block"
       "------\n")
 print(block2.get_transaction(chain.last_transaction_number))

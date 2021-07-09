@@ -65,10 +65,10 @@ class Chain:
                 block.save(), transmitter.save(), receiver.save()
                 return transaction
             return "Transaction impossible: " \
-               "place non disponible sur le bloc choisi."
+                   "place non disponible sur le bloc choisi."
         else:
             return "Transaction impossible: " \
-                   "solde insuffisant pour l'utilisateur émetteur.",
+                   "solde insuffisant pour l'utilisateur émetteur."
 
     def verify_wallet(self, id):
         return id in utils.get_wallets_name()
@@ -77,7 +77,7 @@ class Chain:
         for block in self.blocks:
             for transaction in block.transactions:
                 if num == transaction['number']:
-                    return transaction
+                    return block
         return "Aucune transaction pour le numéro {}".format(num)
 
     def get_last_transaction_number(self):
