@@ -54,13 +54,13 @@ class Chain:
 
         # Vérification du solde du wallet émetteur
         if transmitter.balance >= amount:
-            self.last_transaction_number += 1
             transaction = block.add_transaction(
                 self.last_transaction_number + 1,
                 transmitter, receiver, amount
             )
             # Si la transaction est acceptée sur le bloc
             if transaction:
+                self.last_transaction_number += 1
                 transmitter.send(receiver, amount)
                 block.save(), transmitter.save(), receiver.save()
                 return transaction
